@@ -1,0 +1,3 @@
+#!/bin/sh
+
+PORT=1234 ./node_modules/.bin/forever start -c ./node_modules/.bin/coffee server.coffee
