@@ -15,6 +15,10 @@ app.get('/', (req, res) ->
   res.sendfile(__dirname + '/index.html');
 )
 
+app.get("/test", (req, res) ->
+  res.sendfile(__dirname + '/test.html');
+)
+
 app.post('/point', (req, res) ->
   # cors!
   if req.headers.origin.match(/http:\/\/\w+\.biblegateway\.com/)
@@ -57,5 +61,11 @@ nearby = io.of('/nearby').on('connection', (socket) ->
         socket.emit("nearby point", point) if isPointInCircle && !same_client
 
     )
+  )
+)
+
+map = io.of('/map').on('connection', (socket) ->
+  serverEmitter.on('new point', (point) ->
+    socket.emit("new point", point)
   )
 )

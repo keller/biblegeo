@@ -1,0 +1,25 @@
+<html>
+<head>
+  <title>Test</title>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+<body>
+<script>
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(function(position) {
+    $.ajax({
+      type: "POST",
+      url: 'http://'+location.host+"/point",
+      data: {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        accuracy: position.coords.accuracy,
+        passage: "Matthew 5",
+        version: "niv"
+      }
+    });
+  });
+}
+</script>
+</body>
+</html>

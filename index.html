@@ -1,20 +1,37 @@
 <html>
-<body>
+<head>
 <script src="/socket.io/socket.io.js"></script>
+<script src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
+<style>
+  #map { height: 80%; }
+</style>
+</head>
+<body>
+<div id="map"></div>
 <script>
+  // create a map in the "map" div, set the view to a given place and zoom
+var map = L.map('map').setView([41.21172151054787, -92.7685546875], 4);
+
+// add an OpenStreetMap tile layer
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+
+// add a marker in the given location, attach some popup content to it and open the popup
+// L.marker([41.21172151054787, -92.7685546875]).addTo(map).bindPopup('John 1').openPopup();
+if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(function(position) {
-    var socket = io.connect('http://'+location.host+'/nearby');
+   var socket = io.connect('http://'+location.host+'/map');
+  
     socket.on('connect', function () {
-      socket.emit('set info', position.coords, function(data) {
-      });
     });
-    socket.on('message', function (data) {
-      console.log(data);
-    });
-    socket.on('nearby point', function(data){
+    
+    socket.on('new point', function (data) {
+      L.marker([data.latitude, data.longitude]).addTo(map).bindPopup(unescape(data.passage)).openPopup();
       console.log(data);
     });
   });
+}
 </script>
+
 </body>
 </html>
