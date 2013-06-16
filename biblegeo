@@ -1,0 +1,8 @@
+#!/bin/sh
+if test "$1" = "start"; then
+    PORT=80 ./node_modules/.bin/forever start -c ./node_modules/.bin/coffee server.coffee
+elif test "$1" = "stop"; then
+    ./node_modules/.bin/forever stop server.coffee
+elif test "$1" = "restart"; then
+    PORT=80 ./node_modules/.bin/forever restart -c ./node_modules/.bin/coffee server.coffee
+fi
