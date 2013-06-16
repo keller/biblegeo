@@ -29,7 +29,7 @@ app.post('/point', (req, res) ->
 )
 
 
-io.sockets.on('connection', (socket) ->
+nearby = io.of('/nearby').on('connection', (socket) ->
   socket.on('set info', (info) ->
     socket.set('info', info)
   )
@@ -47,15 +47,8 @@ io.sockets.on('connection', (socket) ->
           {latitude: info.latitude, longitude: info.longitude},
           circleDistance
         )
-        socket.emit("local point", point) if isPointInCircle
+        socket.emit("nearby point", point) if isPointInCircle
 
-    )
-  )
-  socket.on('debug', (data, callback) ->
-    socket.get('data', (err, info) ->
-      console.log data
-      console.log info
-      callback(info)
     )
   )
 )

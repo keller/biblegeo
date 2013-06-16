@@ -3,24 +3,15 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
   navigator.geolocation.getCurrentPosition(function(position) {
-    // console.log(position.coords);
-
-    var socket = io.connect('http://localhost:8000');
+    var socket = io.connect('http://localhost:8000/nearby');
     socket.on('connect', function () {
       socket.emit('set info', position.coords, function(data) {
-        // console.log('hi');
-        // socket.emit('debug2', 'foobar', function(data) {
-        //   console.log(data);
-        // });
       });
     });
     socket.on('message', function (data) {
       console.log(data);
     });
-    socket.on('debug2', function (data) {
-      console.log(data);
-    });  
-    socket.on('local point', function(data){
+    socket.on('nearby point', function(data){
       console.log(data);
     });
   });
