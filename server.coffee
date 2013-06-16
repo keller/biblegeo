@@ -36,7 +36,7 @@ nearby = io.of('/nearby').on('connection', (socket) ->
 
   serverEmitter.on('new point', (point) ->
     socket.get('info', (err, info) ->
-      if info.longitude? && info.latitude?
+      if info.longitude? && info.latitude? && point.latitude? && point.longitude?
         maxDistance = 1000
         circleDistance = maxDistance
         circleDistance += info.accuracy if info.accuracy?
