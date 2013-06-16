@@ -16,6 +16,11 @@ app.get('/', (req, res) ->
 )
 
 app.post('/point', (req, res) ->
+  # cors!
+  if req.headers.origin.match(/http:\/\/\w+\.biblegateway\.com/)
+    res.set('Access-Control-Allow-Origin', req.headers.origin);
+    res.set('Access-Control-Allow-Methods', 'POST');
+    res.set('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
   if req.body.longitude? && req.body.latitude?
     # should check valid input
     serverEmitter.emit('new point', req.body)
@@ -36,7 +41,7 @@ nearby = io.of('/nearby').on('connection', (socket) ->
 
   serverEmitter.on('new point', (point) ->
     socket.get('info', (err, info) ->
-      if info.longitude? && info.latitude? && point.latitude? && point.longitude?
+      if info?.longitude && info?.latitude && point?.latitude && point?.longitude
         maxDistance = 1000
         circleDistance = maxDistance
         circleDistance += info.accuracy if info.accuracy?
@@ -47,7 +52,9 @@ nearby = io.of('/nearby').on('connection', (socket) ->
           {latitude: info.latitude, longitude: info.longitude},
           circleDistance
         )
-        socket.emit("nearby point", point) if isPointInCircle
+        same_client = if point.id? && info.id? && point.id == info.id then true else false
+        # socket.emit("nearby point", point) if isPointInCircle
+        socket.emit("nearby point", point) if isPointInCircle && !same_client
 
     )
   )
