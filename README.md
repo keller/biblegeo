@@ -1,0 +1,1 @@
+rough proof of concept. using socket.io to see nearby requests. possible use for bg to see nearby scriptures
