@@ -28,24 +28,26 @@ app.post('/point', (req, res) ->
   )
 )
 
+
 io.sockets.on('connection', (socket) ->
   socket.on('set info', (info) ->
-    coords = 
-      latitude: info.latitude
-      longitude: info.longitude
-    socket.set('info', coords)
+    socket.set('info', info)
   )
 
   serverEmitter.on('new point', (point) ->
     socket.get('info', (err, info) ->
       if info.longitude? && info.latitude?
         maxDistance = 1000
+        circleDistance = maxDistance
+        circleDistance += info.accuracy if info.accuracy?
+        circleDistance += point.accuracy if point.accuracy?
 
-        distance = geolib.getDistance(
+        isPointInCircle = geolib.isPointInCircle(
           {latitude: point.latitude, longitude: point.longitude}, 
-          {latitude: info.latitude, longitude: info.longitude}
+          {latitude: info.latitude, longitude: info.longitude},
+          circleDistance
         )
-        socket.emit("local point", point) if distance < maxDistance
+        socket.emit("local point", point) if isPointInCircle
 
     )
   )
