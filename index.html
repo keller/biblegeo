@@ -7,7 +7,7 @@
 
     var socket = io.connect('http://localhost:8000');
     socket.on('connect', function () {
-      socket.emit('set location', position.coords, function(data) {
+      socket.emit('set info', position.coords, function(data) {
         // console.log('hi');
         // socket.emit('debug2', 'foobar', function(data) {
         //   console.log(data);
@@ -20,7 +20,7 @@
     socket.on('debug2', function (data) {
       console.log(data);
     });  
-    socket.on('local osis', function(data){
+    socket.on('local point', function(data){
       console.log(data);
     });
   });

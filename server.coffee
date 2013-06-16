@@ -1,4 +1,3 @@
-pg = require('pg')
 geolib = require('geolib')
 express = require('express')
 app = express()
@@ -6,8 +5,6 @@ server = require('http').createServer(app)
 io = require('socket.io').listen(server)
 events = require('events')
 serverEmitter = new events.EventEmitter()
-
-conString = process.env.DATABASE_URL || "tcp://kellerdavis@localhost/geobible"
 
 app.use(express.bodyParser())
 
@@ -19,76 +16,44 @@ app.get('/', (req, res) ->
 )
 
 app.post('/point', (req, res) ->
-  longitude = req.body.longitude
-  latitude = req.body.latitude
-  osis_ref = req.body.osis_ref
-  version = req.body.version
-
-  pgClient = new pg.Client(conString)
-  pgClient.connect( (err) ->
-
-    sql = "INSERT INTO requests (osis_ref, version, location) VALUES ('#{osis_ref}', '#{version}', 'POINT(#{longitude} #{latitude})')"
-    # console.log sql
-    pgClient.query(sql, (err, result) ->
-      # handle error?
-    )
-  )
-
-  serverEmitter.emit('bg request', req.body)
-  # io.sockets.emit("bg request", req.body);
+  if req.body.longitude? && req.body.latitude?
+    # should check valid input
+    serverEmitter.emit('new point', req.body)
+    success = true
+  else 
+    success = false
 
   res.send(
-    saved: 'success'
+    recieved: success
   )
-)
-
-app.get('/point', (req, res) ->
-  longitude = req.query.longitude
-  latitude = req.query.latitude
-  distance = req.body.distance || 1000
-  limit = req.body.limit || 10
-
-  pgClient = new pg.Client(conString)
-  pgClient.connect( (err) ->
-
-    sql = "SELECT osis_ref, version, ST_X(location::geometry) AS longitude, ST_Y(location::geometry) AS latitude FROM requests WHERE ST_DWithin( location, 'POINT(#{longitude} #{latitude})', #{distance}) ORDER BY time_requested DESC LIMIT #{limit}"
-    pgClient.query(sql, (err, result) ->
-      res.send(
-        refs: result.rows
-      )
-    )
-  )
-  
 )
 
 io.sockets.on('connection', (socket) ->
-  socket.on('set location', (location, callback) ->
+  socket.on('set info', (info) ->
     coords = 
-      latitude: location.latitude
-      longitude: location.longitude
-    socket.set('location', coords, () ->
-      callback()
-    )
+      latitude: info.latitude
+      longitude: info.longitude
+    socket.set('info', coords)
   )
 
-  serverEmitter.on('bg request', (data) ->
-    socket.get('location', (err, location) ->
-      if location.longitude? && location.latitude?
+  serverEmitter.on('new point', (point) ->
+    socket.get('info', (err, info) ->
+      if info.longitude? && info.latitude?
         maxDistance = 1000
 
         distance = geolib.getDistance(
-          {latitude: data.latitude, longitude: data.longitude}, 
-          {latitude: location.latitude, longitude: location.longitude}
+          {latitude: point.latitude, longitude: point.longitude}, 
+          {latitude: info.latitude, longitude: info.longitude}
         )
-        socket.emit("local osis", osis: data.osis_ref) if distance < maxDistance
+        socket.emit("local point", point) if distance < maxDistance
 
     )
   )
   socket.on('debug', (data, callback) ->
-    socket.get('location', (err, location) ->
+    socket.get('data', (err, info) ->
       console.log data
-      console.log location
-      callback(location)
+      console.log info
+      callback(info)
     )
   )
 )
