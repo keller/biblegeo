@@ -19,7 +19,6 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
 // add a marker in the given location, attach some popup content to it and open the popup
 // L.marker([41.21172151054787, -92.7685546875]).addTo(map).bindPopup('John 1').openPopup();
 if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(function(position) {
    var socket = io.connect('http://'+location.host+'/map');
   
     socket.on('connect', function () {
@@ -29,7 +28,6 @@ if (navigator.geolocation) {
       L.marker([data.latitude, data.longitude]).addTo(map).bindPopup(unescape(data.passage)).openPopup();
       console.log(data);
     });
-  });
 }
 </script>
 

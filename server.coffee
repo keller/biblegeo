@@ -21,7 +21,7 @@ app.get("/test", (req, res) ->
 
 app.post('/point', (req, res) ->
   # cors!
-  if req.headers?.origin && req.headers.origin.match(/http:\/\/\w+\.biblegateway\.com/)
+  if req.headers?.origin? && req.headers.origin.match(/http:\/\/\w+\.biblegateway\.com/)
     res.set('Access-Control-Allow-Origin', req.headers.origin);
     res.set('Access-Control-Allow-Methods', 'POST');
     res.set('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
@@ -45,7 +45,7 @@ nearby = io.of('/nearby').on('connection', (socket) ->
 
   serverEmitter.on('new point', (point) ->
     socket.get('info', (err, info) ->
-      if info?.longitude && info?.latitude && point?.latitude && point?.longitude
+      if info?.longitude? && info.latitude? && point?.latitude && point.longitude?
         maxDistance = 1000
         circleDistance = maxDistance
         circleDistance += info.accuracy if info.accuracy?
