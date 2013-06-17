@@ -21,7 +21,7 @@ app.get("/test", (req, res) ->
 
 app.post('/point', (req, res) ->
   # cors!
-  if req.headers.origin.match(/http:\/\/\w+\.biblegateway\.com/)
+  if req.headers?.origin && req.headers.origin.match(/http:\/\/\w+\.biblegateway\.com/)
     res.set('Access-Control-Allow-Origin', req.headers.origin);
     res.set('Access-Control-Allow-Methods', 'POST');
     res.set('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
