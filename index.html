@@ -56,9 +56,7 @@ if (navigator.geolocation) {
       var passages, passage_display;
       passages = create_passage_displays(data.passages);
       passage_display = passages.join(", ");
-      console.log(passages);
       L.marker([data.latitude, data.longitude]).addTo(map).bindPopup(passage_display).openPopup();
-      console.log(data);
     });
 }
 </script>
