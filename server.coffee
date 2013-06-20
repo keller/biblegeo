@@ -12,19 +12,19 @@ port = process.env.PORT || 8000
 server.listen(port)
 
 app.get('/', (req, res) ->
-  res.sendfile(__dirname + '/index.html');
+  res.sendfile(__dirname + '/index.html')
 )
 
 app.get("/test", (req, res) ->
-  res.sendfile(__dirname + '/test.html');
+  res.sendfile(__dirname + '/test.html')
 )
 
 app.post('/point', (req, res) ->
   # cors!
   if req.headers?.origin? && req.headers.origin.match(/http:\/\/\w+\.biblegateway\.com/)
-    res.set('Access-Control-Allow-Origin', req.headers.origin);
-    res.set('Access-Control-Allow-Methods', 'POST');
-    res.set('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
+    res.set('Access-Control-Allow-Origin', req.headers.origin)
+    res.set('Access-Control-Allow-Methods', 'POST')
+    res.set('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type')
   if req.body.longitude? && req.body.latitude?
     # should check valid input
     serverEmitter.emit('new point', req.body)
@@ -40,11 +40,7 @@ app.post('/point', (req, res) ->
 
 nearby = io.of('/nearby').on('connection', (socket) ->
   socket.on('set info', (info) ->
-    socket.set('info', info)
-  )
-
-  serverEmitter.on('new point', (point) ->
-    socket.get('info', (err, info) ->
+    serverEmitter.on('new point', (point) ->
       if info?.longitude? && info.latitude? && point?.latitude && point.longitude?
         maxDistance = 1000
         circleDistance = maxDistance
@@ -56,12 +52,9 @@ nearby = io.of('/nearby').on('connection', (socket) ->
           {latitude: info.latitude, longitude: info.longitude},
           circleDistance
         )
-        same_client = if point.id? && info.id? && point.id == info.id then true else false
-        # socket.emit("nearby point", point) if isPointInCircle
-        socket.emit("nearby point", point) if isPointInCircle && !same_client
-
+        socket.emit("nearby point", point) if isPointInCircle
     )
-  )
+  ) 
 )
 
 map = io.of('/map').on('connection', (socket) ->
