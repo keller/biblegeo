@@ -12,6 +12,34 @@
 <script>
   // create a map in the "map" div, set the view to a given place and zoom
 var map = L.map('map').setView([41.21172151054787, -92.7685546875], 4);
+var books_displays= {Gen:"Genesis",Exod:"Exodus",Lev:"Leviticus",Num:"Numbers",Deut:"Deuteronomy",Josh:"Joshua",Judg:"Judges",Ruth:"Ruth","1Sam":"1 Samuel","2Sam":"2 Samuel","1Kgs":"1 Kings","2Kgs":"2 Kings","1Chr":"1 Chronicles","2Chr":"2 Chronicles",Ezra:"Ezra",Neh:"Nehemiah",Esth:"Esther",Job:"Job",Ps:"Psalm",Prov:"Proverbs",Eccl:"Ecclesiastes",Song:"Song of Solomon",Isa:"Isaiah",Jer:"Jeremiah",Lam:"Lamentations",Ezek:"Ezekiel",Dan:"Daniel",Hos:"Hosea",Joel:"Joel",Amos:"Amos",Obad:"Obadiah",Jonah:"Jonah",Mic:"Micah",
+  Nah:"Nahum",Hab:"Habakkuk",Zeph:"Zephaniah",Hag:"Haggai",Zech:"Zechariah",Mal:"Malachi",Matt:"Matthew",Mark:"Mark",Luke:"Luke",John:"John",Acts:"Acts",Rom:"Romans","1Cor":"1 Corinthians","2Cor":"2 Corinthians",Gal:"Galatians",Eph:"Ephesians",Phil:"Philippians",Col:"Colossians","1Thess":"1 Thessalonians","2Thess":"2 Thessalonians","1Tim":"1 Timothy","2Tim":"2 Timothy",Titus:"Titus",Phlm:"Philemon",Heb:"Hebrews",Jas:"James","1Pet":"1 Peter","2Pet":"2 Peter","1John":"1 John","2John":"2 John","3John":"3 John",
+  Jude:"Jude",Rev:"Revelation",Tob:"Tobit",Jdt:"Judith","1Macc":"1 Maccabees","2Macc":"2 Maccabees",Sir:"Sirach",Wis:"Wisdom",Bar:"Baruch",GkEst:"Greek Esther",EpJer:"Letter of Jeremiah",SgThr:"Song of the Three Young Men",PrAz:"Prayer of Azariah",Sus:"Susanna",Bel:"Bel and the Dragon","1Esd":"1 Esdras",PrMan:"Prayer of Manasseh",Ps151:"Psalm 151","3Ma":"3 Maccabees","2Esd":"2 Esdras","4Ma":"4 Maccabees",AdEst:"Additions to Esther"}
+var create_passage_displays = function(osises) {
+  var i, osis, osis_part, passage_display, passage_parts, _i, _j, _len, _len1, _ref, _ref1, passage_displays;
+
+  _ref = osises;
+  passage_displays = []
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    osis = _ref[_i];
+    passage_display = '';
+    _ref1 = osis.split('-');
+    for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
+      osis_part = _ref1[i];
+      if (i === 1) {
+        passage_display += '-';
+      }
+      passage_parts = osis_part.split('.');
+      passage_display += "" + books_displays[passage_parts[0]] + " " + passage_parts[1];
+      if (passage_parts[2] != null) {
+        passage_display += ":" + passage_parts[2];
+      }
+    }
+    passage_displays.push(passage_display);
+  }
+  return passage_displays;
+};
+
 
 // add an OpenStreetMap tile layer
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
@@ -25,7 +53,11 @@ if (navigator.geolocation) {
     });
     
     socket.on('new point', function (data) {
-      L.marker([data.latitude, data.longitude]).addTo(map).bindPopup(unescape(data.passage)).openPopup();
+      var passages, passage_display;
+      passages = create_passage_displays(data.passages);
+      passage_display = passages.join(", ");
+      console.log(passages);
+      L.marker([data.latitude, data.longitude]).addTo(map).bindPopup(passage_display).openPopup();
       console.log(data);
     });
 }
