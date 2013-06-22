@@ -4,9 +4,12 @@ app = express()
 server = require('http').createServer(app)
 io = require('socket.io').listen(server)
 events = require('events')
+
 serverEmitter = new events.EventEmitter()
 
 app.use(express.bodyParser())
+app.use(express.static(__dirname + "/public"));
+
 
 port = process.env.PORT || 8000
 server.listen(port)
