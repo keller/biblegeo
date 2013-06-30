@@ -4,5 +4,11 @@ if test "$1" = "start"; then
 elif test "$1" = "stop"; then
     ./node_modules/.bin/forever stop server.coffee
 elif test "$1" = "restart"; then
-    PORT=80 ./node_modules/.bin/forever restart -c ./node_modules/.bin/coffee server.coffee
+    PORT=80 ./node_modules/.bin/forever restart -c ./node_modules/.bin/coffee server.coffeea
+elif test "$1" = "start_pm2"; then
+    PORT=80 ./node_modules/.bin/pm2 start server.js -i max
+elif test "$1" = "stop_pm2"; then
+    PORT=80 ./node_modules/.bin/forever stopAll
+elif test "$1" = "restart_pm2"; then
+    PORT=80 ./node_modules/.bin/forever restartAll
 fi
