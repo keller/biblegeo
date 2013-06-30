@@ -26,7 +26,7 @@ L.Map = L.Map.extend(
 )
 
 
-mapbox = L.tileLayer('http://{s}.tiles.mapbox.com/v3/kellerdavis.map-d3i827mm/{z}/{x}/{y}.png')
+mapbox = L.tileLayer('http://{s}.tiles.mapbox.com/v3/kellerdavis.map-10iv1xo0/{z}/{x}/{y}.png')
 water_color = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.')
 osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors')
 satellite = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg', 
