@@ -15,7 +15,6 @@ create_passage_displays = (osises) ->
 
 L.Map = L.Map.extend(
   openPopup: (popup) ->
-    
     # @closePopup()  #just comment this
     @_popup = popup;
 
@@ -25,20 +24,40 @@ L.Map = L.Map.extend(
     # console.log layer
     # @removeLayer(layer)
 )
+
+
+mapbox = L.tileLayer('http://{s}.tiles.mapbox.com/v3/kellerdavis.map-d3i827mm/{z}/{x}/{y}.png')
+water_color = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.')
+osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors')
+satellite = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg', 
+  attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"><br>Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency'
+  subdomains: '1234'
+)
+
+
 map = L.map('map',
   center: [37.8, -96]
   zoom: 4
   maxZoom: 12
+  layers : [mapbox]
 )
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', 
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-).addTo(map)
+
+baseMaps = {
+    "Default": mapbox,
+    "Artsy": water_color
+    "OpenStreetMap": osm
+    "Satellite": satellite
+}
+
+L.control.layers(baseMaps).addTo(map);
 
 
-# L.tileLayer('http://{s}.tile.cloudmade.com/{key}/{styleId}/256/{z}/{x}/{y}.png', {
-#     key: '2bcc2489d43c44b597bf7b4cbd26cc96'
-#     styleId: 22677
-# }).addTo(map)
+map.on('popupopen', (e) ->
+  setTimeout( ->
+    e.target.closePopup()
+  , 5000)
+)
+
 
 if (navigator.geolocation)
   socket = io.connect('http://'+location.host+'/map')
@@ -51,8 +70,5 @@ if (navigator.geolocation)
     passages = create_passage_displays(data.passages)
     passage_display = passages.join(", ")
     L.marker([data.latitude, data.longitude]).addTo(map).bindPopup(passage_display).openPopup()
-    # marker = L.marker([data.latitude, data.longitude]).addTo(map)
-    # popup = L.popup().setContent(passage_display)
-    # map.addLayer(popup)
 
   )
